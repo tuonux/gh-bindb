@@ -12,7 +12,7 @@
 // 
 // Example Usage:  
 // 
-// import_code("/path/to/bindb.src")
+// import_code("/path/to/libbindb.src")
 // 
 BinDB = {}
 // 

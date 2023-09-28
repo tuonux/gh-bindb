@@ -1,5 +1,5 @@
 // Import BinDB library ( change the path with yours )
-import_code("/home/tuonux/bindb.src")
+import_code("/home/tuonux/libbindb.src")
 
 clear_screen
 

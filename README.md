@@ -6,9 +6,9 @@ BinDB it's a library for Grey Hack Game that allow you to create a password-prot
 
 ## How to use it
 
-At the top of everything to your code import bindb.src with the "import_code" method.
+At the top of everything to your code import libbindb.src with the "import_code" method.
 
-    import_code("/absolute/path/of/bindb.src")
+    import_code("/absolute/path/of/libbindb.src")
 
 After that, create a connection with your db with the following example method:
 
