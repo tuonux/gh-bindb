@@ -140,6 +140,12 @@ As long as you have your data protected in a binary database you are safe, but d
 
 Upload only the binary of your program or make sure you have the right permissions set on your file where the source code for your program resides.
 
+## Next Goals:
+
+- JOIN method to join between two or more tables
+- LIKE method to search a value in a row
+- Terminal GUI to explore your database in your terminal and perform queries directly from it
+
 ## License
 
     MIT License
