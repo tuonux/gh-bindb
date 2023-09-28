@@ -2,7 +2,7 @@
 
 Author: tuonux \<tuonux0@gmail.com\>
 
-BinDB it's a library for Grey Hack Game that allow you to create a password-protected binary database inaccessible to third parties and without need parsers or something like that.
+BinDB it's a library for Grey Hack Game that allow you to create and manage a password-protected binary database inaccessible to third parties and without need parsers or something like that.
 
 ## How to use it
 
