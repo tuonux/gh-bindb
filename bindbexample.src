@@ -13,10 +13,6 @@ mrRobotDb.insert("users", {"name": "Angela", "surname": "Moss"})
 mrRobotDb.insert("users", {"name": "Joanna", "surname": "Olofsson"})
 mrRobotDb.insert("users", {"name": "Gideon", "surname": "Goddard"})
 
-print("<color=green>Update the binary database buffer with the new changes")
-
-mrRobotDb.write()
-
 print("<color=green>Fetch all data in users table and print the object")
 
 for user in mrRobotDb.fetch("users")
