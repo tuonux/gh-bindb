@@ -1,4 +1,4 @@
-# BinDB
+# BinDB Library
 
 Author: tuonux \<tuonux0@gmail.com\>
 
