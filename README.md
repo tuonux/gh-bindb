@@ -16,6 +16,8 @@ After that, create a connection with your db with the following example method:
 
 ## Availables methods
 
+**_Keep in mind: The index of the rows starts form 1 and not 0_**
+
 ### BinDB.connect(dbname, dbpassword, tablesArray, dbDirectory)
 
 Instantiate the connection with your binary database
