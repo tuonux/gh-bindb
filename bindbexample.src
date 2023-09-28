@@ -1,0 +1,63 @@
+// Import BinDB library ( change the path with yours )
+import_code("/home/tuonux/bindb.src")
+
+clear_screen
+
+mrRobotDb = BinDB.connect("mrRobot", "myPassword", ["users"], "/home/tuonux")
+
+print("<color=green>Bulk insert data in users table")
+
+mrRobotDb.insert("users", {"name": "Elliot", "surname": "Alderson"})
+mrRobotDb.insert("users", {"name": "Tyrell", "surname": "Wellick"})
+mrRobotDb.insert("users", {"name": "Angela", "surname": "Moss"})
+mrRobotDb.insert("users", {"name": "Joanna", "surname": "Olofsson"})
+mrRobotDb.insert("users", {"name": "Gideon", "surname": "Goddard"})
+
+print("<color=green>Update the binary database buffer with the new changes")
+
+mrRobotDb.write()
+
+print("<color=green>Fetch all data in users table and print the object")
+
+for user in mrRobotDb.fetch("users")
+     print(user)
+end for
+
+print("<color=green>Fetch a row by the index, in this case we get Elliot data and print his name")
+
+userElliot = mrRobotDb.fetchOne("users", 1)
+print(userElliot)
+
+print("<color=green>Fetch a row by the key ""name"" with value ""Elliot""")
+
+userElliot = mrRobotDb.fetchBy("users", "name", "Elliot")
+
+print("<color=green>Update the index 1 (Elliot), with new name and surname")
+
+mrRobotDb.update("users", 1, {"name": "Mr.", "surname": "Robot"})
+
+print("<color=green>Delete the index 5 (Gideon)")
+
+mrRobotDb.delete("users", 5)
+
+print("<color=green>Insert data with methods chain")
+
+mrRobotDb.insert("users", {"name": "Terry", "surname": "Colby"}).write()
+
+print("<color=green>Update the binary database buffer with the updated status")
+
+BinDB.write()
+
+print("<color=green>Print a graphic table and apply a label to the keys")
+
+mrRobotDb.printTable("users", {"name": "Name", "surname": "Surname"})
+
+// If eveerthing works correcty, this is the result:")
+// 
+// #    Name        Surname
+// 1    Mr.         Robot    
+// 2    Tyrell      Wellick
+// 3    Angela      Moss
+// 4    Joanna      Olofsson
+// 5    Terry       Colby 
+

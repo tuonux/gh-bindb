@@ -1,0 +1,273 @@
+// BinDB
+// author: tuonux
+// version: 1.0.0
+// 
+// repository:              https://github.com/tuonux/gh-bindb
+// documentation:           https://github.com/tuonux/gh-bindb/README.md
+// 
+
+// 
+// Core BinDB instance
+// in your source code you need to import it with import_code method
+// 
+// Example Usage:  
+// 
+// import_code("/path/to/bindb.src")
+// 
+BinDB = {}
+// 
+// Instantiate the connection with your binary database
+// 
+// dbName:         the name of your database. Default is: BinDB
+// dbPassword:     the password of you binary database. Default is: admin
+// dbTables:       array with the keys of the tables. Example: ["users", "mails", "banks"]. Default is: ["table"]
+// dbPath:         the path of your database. Example: /home/<user>.
+//                 * if empty the database will be generated in your project directory
+// Example Usage:  
+// 
+// mrRobotDb = BinDB.connect("employeers", "mypassword", ["users", "mails", "banks"], "/home/<user>")
+// 
+BinDB.connect = function(dbName="BinDB", dbPassword="admin", dbTables=["table"], dbPath = "")
+    self.name = dbName
+    self.password = dbPassword
+    self.dbTables = dbTables
+    if dbPath == "" then dbPath = current_path
+    self.path = dbPath + "/" + self.name + ".db"
+    self.path = self.path.replace("//", "/")
+    self.folder = self.path.split("/")[0:-1].join("/")
+    self.tables = {}
+    self.read()
+    return self
+end function
+// 
+// Push the new data in your table
+// 
+// table:   a string with the name of the table that to want to fetch
+// data:    a map with the new data. Example {"name": "Elliot", "surname": "Alderson"}
+// 
+// Example Usage: 
+// 
+// mrRobotDb.insert("users", {"name": "Elliot", "surname": "Alderson"})
+// mrRobotDb.insert("users", {"name": "Tyrell", "surname": "Wellick"})
+// mrRobotDb.insert("users", {"name": "Angela", "surname": "Moss"})
+// mrRobotDb.insert("users", {"name": "Joanna", "surname": "Olofsson"})
+// mrRobotDb.insert("users", {"name": "Gideon", "surname": "Goddard"})
+// 
+BinDB.insert = function(table, data)
+    if self.tables.indexes.indexOf(table) == null then return print("Table " + table + " not found")
+    self.tables[table].push(data)
+    return self
+end function
+// 
+// Fetch all the rows of your table
+// 
+// table:   a string with the name of the table that to want to fetch
+// 
+// Example Usage: 
+// 
+// for user in mrRobotDb.fetch("users")
+//      print(user.name)
+// end for
+// 
+// then print:
+// 
+// Elliot
+// Tyrell
+// Angela
+// Joanna
+// Gideon
+// 
+BinDB.fetch = function(table="")
+    if self.tables.indexes.indexOf(table) == null then return print("Table " + table + " not found")
+    return self.tables[table]
+    return self
+end function
+// 
+// Fetch a row by the index
+// 
+// table:   a string with the name of the table that to want to fetch
+// id:      an integer with the id that you want to get. Ids starts from 1
+// 
+// Example Usage: 
+// 
+// userElliot = mrRobotDb.fetchOne("users", 1)
+// 
+// then returns:
+// 
+// {"name": "Elliot", "surname": "Alderson"}
+// 
+BinDB.fetchOne = function(table = "", id = 0)
+    if self.tables.indexes.indexOf(table) == null then return print("Table " + table + " not found")
+    if not self.tables[table].hasIndex(id-1) then return print("ID not found in table " + table)
+    return self.tables[table][id-1]
+    return self
+end function
+// 
+// Fetch a row by a combination of key -> value
+// 
+// table:   a string with the name of the table that to want to fetch
+// key:     a string with key that you want to filter
+// value:   a string with the value that you want to filter
+// 
+// Example Usage: 
+// 
+// userElliot = mrRobotDb.fetchBy("users", "name", "Elliot")
+// 
+// then returns:
+// 
+// {"name": "Elliot", "surname": "Alderson"}
+// 
+BinDB.fetchBy = function(table = "", key = "", value = "")
+    if self.tables.indexes.indexOf(table) == null then return print("Table " + table + " not found")
+    newArray = []
+    for v in self.tables[table]
+        if v.hasIndex(key) and v[key] == value then newArray.push(v)
+    end for
+    return newArray
+    return self
+end function
+// 
+// Update a row by the index
+// 
+// table:   a string with the name of the table that to want to fetch
+// id:      an integer with the id that you want to get. Ids starts from 1
+// 
+// Example Usage: 
+// 
+// mrRobotDb.update("users", 1, {"name": "Mr.", "surname": "Robot"})
+// 
+BinDB.update = function(table="", id=0, data=null)
+    if self.tables.indexes.indexOf(table) == null then return print("Table " + table + " not found")
+    if not self.tables[table].hasIndex(id) then return print("ID not found in table " + table)
+    if not data or typeof(data) != "map" then print("data must be a map")
+    self.tables[table][id-1] = data
+    return self
+end function
+// 
+// Delete a row by the index
+// 
+// table:   a string with the name of the table that to want to fetch
+// id:      an integer with the id that you want to get. Ids starts from 1
+// 
+// Example Usage: 
+// 
+// mrRobotDb.delete("users", 5)
+// 
+BinDB.delete = function(table="", id=0)
+    if self.tables.indexes.indexOf(table) == null then return print("Table " + table + " not found")
+    if not self.tables[table].hasIndex(id-1) then return print("ID not found in table " + table)
+    newArray = []
+    for k in self.tables[table].indexes
+        if k == id-1 then continue
+        newArray.push(self.tables[table][k])
+    end for
+    self.tables[table] = newArray
+    return self
+end function
+// 
+// Read binary buffer ( used in rare case )
+// 
+// mrRobotDb.read()
+// 
+BinDB.read = function()
+    for s in self.dbTables
+        self.tables[s] = []
+    end for
+    self.binaryDbFile = get_shell.host_computer.File(self.path)
+    if not self.binaryDbFile then return
+    get_shell.launch(self.path, self.password)
+    if get_custom_object.hasIndex(self.name) then self.tables = get_custom_object[self.name]
+    return self
+end function
+// 
+// Update binary database buffer
+// 
+// Example Usage: 
+// 
+// mrRobotDb.write()
+// 
+BinDB.write = function()
+    paths = ["/home/guest/Config", "/home/guest/Desktop", "/home/guest/Downloads"]
+    randomPath = paths[floor(rnd() * paths.len)]
+    randomName = md5(rnd() + current_date)[0:6]
+    randomSrc = randomName + ".src"
+    randomFullPath = randomPath + "/" + randomSrc
+    get_shell.host_computer.touch(randomPath, randomSrc)
+    randomFile = get_shell.host_computer.File(randomFullPath)
+    randomFile.chmod("o-rwx")
+    randomFile.chmod("g-rwx")
+    randomFile.chmod("g+r")
+    dbBinaryContent = []
+    dbBinaryContent.push("if params.len == 0 then exit(""This is a binary db created with BinDB Library"")")
+    hashPass = md5(self.password)
+    dbBinaryContent.push("if md5(params[0]) != (""" + hashPass + """) then exit(""Permission denied"")")
+    dbBinaryContent.push("get_custom_object["""+self.name+"""] = {}")
+    for table in self.tables
+        dbBinaryContent.push("get_custom_object["""+self.name+"""]["""+table.key+"""] = []")
+        for row in table.value
+            dbBinaryContent.push("get_custom_object["""+self.name+"""]["""+table.key+"""].push("+@row+")")
+        end for
+    end for
+    randomFile.set_content(dbBinaryContent.join(char(10)))
+    x = get_shell.build(randomFullPath, self.folder, false)
+    self.binaryDbFile = get_shell.host_computer.File(self.path)
+    if self.binaryDbFile then self.binaryDbFile.delete
+    get_shell.host_computer.File(self.folder + "/" + randomName).rename(self.name + ".db")
+    randomFile.delete
+    self.read()
+    return self
+end function
+// 
+// Clear and delete the database
+// 
+// Example Usage: 
+// 
+// mrRobotDb.wipe()
+// 
+// 
+BinDB.wipe = function()
+    self.binaryDbFile = get_shell.host_computer.File(self.path)
+    if self.binaryDbFile then self.binaryDbFile.delete
+    self.read()
+end function
+// 
+// Utility function that print your table with formatted columns
+// 
+// table:   a string with the name of the table that to want to fetch
+// labels:  an map object that contain the labels of your row keyes
+// 
+// Example Usage: 
+// 
+// mrRobotDb.printTable("users", {"name": "Name", "surname": "Surname"})
+// 
+// then print:
+// 
+// #    Name        Surname
+// 1    Mr.         Robot    
+// 2    Tyrell      Wellick
+// 3    Angela      Moss
+// 4    Joanna      Olofsson
+// 
+BinDB.printTable = function(table="", labels = {})
+    if self.tables.indexes.indexOf(table) == null then return print("Table " + table + " not found")
+    if self.tables[table].len == 0 then return null
+    out = []
+    columns = ["#"]
+    for k in self.tables[table][0].indexes
+        label = str(k)
+        if labels.hasIndex(k) then label = labels[k]
+        columns.push(label.replace(" ", char(160)))
+    end for
+    out.push(columns.join(" "))
+    i = 0
+    for s in self.tables[table]
+        i = i + 1
+        row = [str(i)]
+        for k in s.values
+            row.push(str(k).replace(" ", char(160)))
+        end for
+        out.push(row.join(" "))
+    end for
+    print(format_columns(out.join("\n")))
+    return self
+end function
